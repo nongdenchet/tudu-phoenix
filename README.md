@@ -1,4 +1,5 @@
 # Tudu
+Sample project for building api + authentication with phoenix
 
 To start your Phoenix app:
 
@@ -9,7 +10,7 @@ To start your Phoenix app:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
+Production [link](https://tudu-elixir.herokuapp.com/)
 
 ## Learn more
 
