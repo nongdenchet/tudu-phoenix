@@ -24,6 +24,7 @@ defmodule Tudu.Router do
     pipe_through :api
 
     resources "/users", UserController, only: [:create]
+    resources "/todos", TodoController, except: [:new, :edit]
     post "/auth/login", SessionController, :login
     get "/auth/validate", SessionController, :validate
   end
