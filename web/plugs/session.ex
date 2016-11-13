@@ -1,6 +1,7 @@
 defmodule Tudu.Session do
   import Plug.Conn
   import Phoenix.Controller
+  
   alias Tudu.User
 
   def init(opts) do
