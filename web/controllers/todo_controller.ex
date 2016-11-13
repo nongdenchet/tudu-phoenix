@@ -45,11 +45,7 @@ defmodule Tudu.TodoController do
 
   def delete(conn, %{"id" => id}) do
     todo = Repo.get!(Todo, id)
-
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
     Repo.delete!(todo)
-
     send_resp(conn, :no_content, "")
   end
 end
