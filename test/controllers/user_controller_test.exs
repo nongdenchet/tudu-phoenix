@@ -1,5 +1,6 @@
 defmodule Tudu.UserControllerTest do
   use Tudu.ConnCase
+  
   alias Tudu.User
 
   @valid_attrs %{email: "user@gmail.com", password: "validPassword"}

@@ -1,5 +1,6 @@
 defmodule Tudu.UserController do
   use Tudu.Web, :controller
+  
   alias Tudu.User
 
   plug :scrub_params, "user" when action in [:create]

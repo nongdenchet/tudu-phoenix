@@ -10,7 +10,7 @@ defmodule Tudu.ErrorView do
   end
 
   def render("403.json", _assigns) do
-    "Invalid authentication"
+    "Permission denied"
   end
 
   def template_not_found(_template, assigns) do

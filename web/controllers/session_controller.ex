@@ -1,5 +1,6 @@
 defmodule Tudu.SessionController do
   use Tudu.Web, :controller
+  
   alias Tudu.User
 
   plug :require_authenticate when action in [:validate]

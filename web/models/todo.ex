@@ -10,9 +10,13 @@ defmodule Tudu.Todo do
     timestamps()
   end
 
+  @required_fields ~w(user_id title description)
+  @optional_fields ~w(completed)
+
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:title, :description, :completed])
-    |> validate_required([:title, :description, :completed])
+    |> cast(params, @required_fields, @optional_fields)
+    |> validate_required([:user_id, :title, :description])
+    |> validate_length(:description, min: 10)
   end
 end

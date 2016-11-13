@@ -1,15 +1,20 @@
 defmodule Tudu.TodoController do
   use Tudu.Web, :controller
-
+  
   alias Tudu.Todo
 
-  def index(conn, _params) do
-    todos = Repo.all(Todo)
+  plug :require_authenticate
+
+  def index(conn, _params, user) do
+    todos = Repo.all(from t in Todo, where: t.user_id == ^user.id)
     render(conn, "index.json", todos: todos)
   end
 
-  def create(conn, %{"todo" => todo_params}) do
-    changeset = Todo.changeset(%Todo{}, todo_params)
+  def create(conn, %{"todo" => todo_params}, user) do
+    changeset =
+      user
+      |> build_assoc(:todos)
+      |> Todo.changeset(todo_params)
 
     case Repo.insert(changeset) do
       {:ok, todo} ->
@@ -24,13 +29,13 @@ defmodule Tudu.TodoController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    todo = Repo.get!(Todo, id)
+  def show(conn, %{"id" => id}, user) do
+    todo = Repo.get!(user_todos(user), id)
     render(conn, "show.json", todo: todo)
   end
 
-  def update(conn, %{"id" => id, "todo" => todo_params}) do
-    todo = Repo.get!(Todo, id)
+  def update(conn, %{"id" => id, "todo" => todo_params}, user) do
+    todo = Repo.get!(user_todos(user), id)
     changeset = Todo.changeset(todo, todo_params)
 
     case Repo.update(changeset) do
@@ -43,9 +48,18 @@ defmodule Tudu.TodoController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    todo = Repo.get!(Todo, id)
+  def delete(conn, %{"id" => id}, user) do
+    todo = Repo.get!(user_todos(user), id)
     Repo.delete!(todo)
     send_resp(conn, :no_content, "")
+  end
+
+  defp user_todos(user) do
+    assoc(user, :todos)
+  end
+
+  def action(conn, _) do
+    apply(__MODULE__, action_name(conn),
+      [conn, conn.params, conn.assigns.current_user])
   end
 end

@@ -7,6 +7,7 @@ defmodule Tudu.User do
     field :email, :string
     field :password_hash, :string
     field :password, :string, virtual: true
+    has_many :todos, Tudu.Todo
 
     timestamps()
   end
