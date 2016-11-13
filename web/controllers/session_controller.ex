@@ -11,7 +11,7 @@ defmodule Tudu.SessionController do
       token = User.generate_token(user)
       conn
       |> put_status(200)
-      |> render(Tudu.SessionView, "session.json", token: token)
+      |> render(Tudu.SessionView, "session.json", %{user: user, token: token})
     else
       conn
       |> put_status(:unprocessable_entity)

@@ -25,19 +25,47 @@ defmodule Tudu.SessionControllerTest do
     assert json_response(conn, 422)
   end
 
-  test "Authenticate a valid user", %{conn: conn} do
+  test "Authenticate a valid user", %{conn: conn, user: user} do
     conn = post conn, session_path(conn, :login), user: @valid_attrs
     assert json_response(conn, 200)["data"]["token"] != nil
+    assert json_response(conn, 200)["data"]["user"]["id"] == user.id
   end
 
-  test "validate token", %{conn: conn, token: token} do
-    conn = put_req_header(conn, "token", token)
+  test "validate token", %{conn: conn, token: token, user: user} do
+    conn = conn
+    |> put_req_header("token", token)
+    |> put_req_header("user_id", Integer.to_string(user.id))
     conn = get conn, session_path(conn, :validate)
     assert json_response(conn, 200)["data"]["email"] == @valid_attrs.email
   end
 
   test "validate fails if invalid token", %{conn: conn} do
     conn = put_req_header(conn, "token", "invalid-token")
+    conn = get conn, session_path(conn, :validate)
+    assert json_response(conn, 401)
+  end
+
+  test "validate fails if valid token and empty user_id", %{conn: conn, token: token} do
+    conn = put_req_header(conn, "token", token)
+    conn = get conn, session_path(conn, :validate)
+    assert json_response(conn, 401)
+  end
+
+  test "validate fails if empty headers", %{conn: conn} do
+    conn = get conn, session_path(conn, :validate)
+    assert json_response(conn, 401)
+  end
+
+  test "validate fails if invalid user_id", %{conn: conn, token: token} do
+    conn = conn
+    |> put_req_header("token", token)
+    |> put_req_header("user_id", Integer.to_string(-1))
+    conn = get conn, session_path(conn, :validate)
+    assert json_response(conn, 401)
+  end
+
+  test "validate fails if valid user_id and empty token", %{conn: conn, user: user} do
+    conn = put_req_header(conn, "user_id", Integer.to_string(user.id))
     conn = get conn, session_path(conn, :validate)
     assert json_response(conn, 401)
   end

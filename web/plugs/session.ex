@@ -10,7 +10,7 @@ defmodule Tudu.Session do
   def call(conn, repo) do
     token = conn
     |> get_req_header("token")
-    |> Enum.at(0)
+    |> List.first
 
     Phoenix.Token.verify(Tudu.Endpoint, "user", token)
     |> handle(conn, repo)
@@ -29,7 +29,14 @@ defmodule Tudu.Session do
 
   defp handle({:ok, user_id}, conn, repo) do
     user = repo.get!(User, user_id)
-    assign(conn, :current_user, user)
+    user_id = conn
+    |> get_req_header("user_id")
+    |> List.first
+    if user_id == Integer.to_string(user.id) do
+      assign(conn, :current_user, user)
+    else
+      handle({:error, :invalid}, conn, repo)
+    end
   end
 
   defp handle({:error, :invalid}, conn, _repo) do
