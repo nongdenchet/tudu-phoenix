@@ -1,6 +1,6 @@
 defmodule Tudu.TodoController do
   use Tudu.Web, :controller
-  
+
   alias Tudu.Todo
 
   plug :require_authenticate
@@ -37,15 +37,13 @@ defmodule Tudu.TodoController do
   def update(conn, %{"id" => id, "todo" => todo_params}, user) do
     todo = Repo.get!(user_todos(user), id)
     changeset = Todo.changeset(todo, todo_params)
+    handle_update(conn, changeset)
+  end
 
-    case Repo.update(changeset) do
-      {:ok, todo} ->
-        render(conn, "show.json", todo: todo)
-      {:error, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> render(Tudu.ChangesetView, "error.json", changeset: changeset)
-    end
+  def complete(conn, %{"todo_id" => id, "completed" => completed}, user) do
+    todo = Repo.get!(user_todos(user), id)
+    changeset = Todo.complete_changeset(todo, %{completed: completed})
+    handle_update(conn, changeset)
   end
 
   def delete(conn, %{"id" => id}, user) do
@@ -56,6 +54,17 @@ defmodule Tudu.TodoController do
 
   defp user_todos(user) do
     assoc(user, :todos)
+  end
+
+  defp handle_update(conn, changeset) do
+    case Repo.update(changeset) do
+      {:ok, todo} ->
+        render(conn, "show.json", todo: todo)
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(Tudu.ChangesetView, "error.json", changeset: changeset)
+    end
   end
 
   def action(conn, _) do

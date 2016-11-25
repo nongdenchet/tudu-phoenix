@@ -19,4 +19,10 @@ defmodule Tudu.Todo do
     |> validate_required([:user_id, :title, :description])
     |> validate_length(:description, min: 10)
   end
+
+  def complete_changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:completed])
+    |> validate_required([:completed])
+  end
 end

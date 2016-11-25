@@ -92,4 +92,16 @@ defmodule Tudu.TodoControllerTest do
     assert response(conn, 204)
     refute Repo.get(Todo, todo.id)
   end
+
+  test "complete todo return true", %{conn: conn, todo: todo} do
+    conn = post conn, todo_complete_path(conn, :complete, todo), completed: true
+    assert response(conn, 200)
+    assert Repo.get!(Todo, todo.id).completed == true
+  end
+
+  test "complete todo return false", %{conn: conn, todo: todo} do
+    conn = post conn, todo_complete_path(conn, :complete, todo), completed: false
+    assert response(conn, 200)
+    assert Repo.get!(Todo, todo.id).completed == false
+  end
 end
