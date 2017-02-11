@@ -2,6 +2,7 @@ defmodule Tudu.TodoController do
   use Tudu.Web, :controller
 
   alias Tudu.Todo
+  alias Tudu.Todos
 
   plug :require_authenticate
 
@@ -10,13 +11,8 @@ defmodule Tudu.TodoController do
     render(conn, "index.json", todos: todos)
   end
 
-  def create(conn, %{"todo" => todo_params}, user) do
-    changeset =
-      user
-      |> build_assoc(:todos)
-      |> Todo.changeset(todo_params)
-
-    case Repo.insert(changeset) do
+  def create(conn, params, user) do
+    case Todos.Create.process(params, user) do
       {:ok, todo} ->
         conn
         |> put_status(:created)
@@ -46,9 +42,8 @@ defmodule Tudu.TodoController do
     handle_update(conn, changeset)
   end
 
-  def delete(conn, %{"id" => id}, user) do
-    todo = Repo.get!(user_todos(user), id)
-    Repo.delete!(todo)
+  def delete(conn, params, user) do
+    Todos.Delete.process(params, user)
     send_resp(conn, :no_content, "")
   end
 
