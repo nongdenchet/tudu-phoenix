@@ -12,8 +12,8 @@ config :logger, level: :warn
 # Configure your database
 config :tudu, Tudu.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "nongdenchet",
+  password: "",
   database: "tudu_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

@@ -36,8 +36,8 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :tudu, Tudu.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "postgres",
-  password: "postgres",
+  username: "nongdenchet",
+  password: "",
   database: "tudu_dev",
   hostname: "localhost",
   pool_size: 10
